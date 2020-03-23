@@ -1,0 +1,3 @@
+[submodule "br-library"]
+	path = br-library
+	url = git@bitbucket.org:colibriagile/br-library.git
