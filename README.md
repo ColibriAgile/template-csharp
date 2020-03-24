@@ -2,18 +2,20 @@
 
 ## Como usar:
 
-### Faça o download  deste repositório e renomeie a pasta seguindo o seguinte padrão:
+### Faça um fork deste repositório e dê um nome seguindo o seguinte padrão:
 
 ```
 br-nome-do-projeto
 ```
 use sempre lowercase e separação por hifens.
 
-### Inicie um terminal na pasta e rode o seguinte comando:
+### faça um clone do fork em sua maquina.
+
+### Inicie um terminal na pasta do repositório e rode o seguinte comando:
 ```
 fab iniciar_projeto:produto=<produto>
 ```
-Onde \<produto> pode ser: 
+Onde <produto> pode ser: 
 - master
 - pos
 - cbo
@@ -32,4 +34,3 @@ Ex:
 ```
 fab inicia_projeto:Br.UmNomeDiferente,nome_exibicao="Um Nome Diferente",produto=master
 ```
-Ao final do processo suba o repositório para o bitbucket.
