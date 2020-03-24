@@ -1,4 +1,4 @@
-﻿{
+{
    "arquivos":[
       {
          "_pattern_nome":"BrModelo_.*\\.exe\\b",
@@ -10,7 +10,7 @@
       
    },
    "nome":"%projeto%",
-   "nome_exibicao":"%NomeExibicao%",
+   "nome_exibicao":"%nomeExibicao%",
    "produto":"%produto%",
    "versao":"1.0.0.0",
    "empresa":"NCR",

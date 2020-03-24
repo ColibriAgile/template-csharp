@@ -1,4 +1,4 @@
-﻿<?xml version='1.0' encoding='utf-8'?>
+<?xml version='1.0' encoding='utf-8'?>
 <project version='8' encrypted='1'>
 	<steps type='0'>
 		<step action='Subroutine Call'>
@@ -76,7 +76,7 @@
 		</step>
 		<step action='Run Program'>
 			<buildfailsteps type='11'>0</buildfailsteps>
-			<command>dotnet restore %pasta-projeto%\%projeto%.sln</command>
+			<command>dotnet restore "%pasta-projeto%\%nomeExibicao%.sln"</command>
 			<indent type='3'>1</indent>
 			<name>dotnet restore projeto</name>
 			<outputfrom type='3'>1</outputfrom>
