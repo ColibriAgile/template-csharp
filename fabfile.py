@@ -9,12 +9,12 @@ def obter_caminho(pasta=''):
 
 def substituir_macro(arquivo, macro, valor):
     
-    with open(arquivo, 'r', encoding='utf-8-sig') as arq:
+    with open(arquivo, 'r', encoding='utf-8') as arq:
         data = arq.read()
         
     data = data.replace(macro, valor)
 
-    with open(arquivo, 'w', encoding='utf-8-sig') as arq:
+    with open(arquivo, 'w', encoding='utf-8') as arq:
         arq.write(data)
 
 def substituir_macros(nome, nome_exibicao, produto):
