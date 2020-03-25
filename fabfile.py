@@ -21,9 +21,9 @@ def substituir_macro(arquivo, macro, valor):
 def substituir_macros(nome, nome_exibicao, produto):
     
     def remover_prefixo(nome):
-        if nome.startswith('Br.'):
+        if nome.startswith('Br'):
             return nome[3:]
-        if nome.startswith('Ncr.'):
+        if nome.startswith('Ncr'):
             return nome[4:]
         return nome 
 
@@ -33,21 +33,24 @@ def substituir_macros(nome, nome_exibicao, produto):
     arquivos = [
         obter_caminho(r'_build\server.ini'), 
         installer,
-        builder, 
-        manifesto
+        builder
     ] 
     for arquivo in arquivos:
-        puts(arquivo)
         substituir_macro(arquivo, '%projeto%', nome)
 
     substituir_macro(builder, '%nomeExibicao%', nome_exibicao)
+    substituir_macro(manifesto, '%projeto%', remover_prefixo(nome))
     substituir_macro(manifesto, '%nomeExibicao%', remover_prefixo(nome_exibicao))
-    substituir_macro(manifesto, '%produto%', remover_prefixo(produto))
+    substituir_macro(manifesto, '%produto%', produto)
     
     app_id = str(uuid.uuid1())
     puts('AppId gerado para a aplicação: ' + app_id)
     substituir_macro(installer, r'%app_id%', app_id)
 
+def criar_projeto_dotnet(tipo, projeto, solucao):
+    local('dotnet new {} -n {}'.format(tipo, projeto))
+    local('dotnet new sln -n "{}"'.format(solucao))
+    local('dotnet sln add {}'.format(projeto))
 
 @task
 def iniciar_projeto(nome=None, nome_exibicao=None, produto='master', tipo='winforms'):
@@ -58,8 +61,9 @@ def iniciar_projeto(nome=None, nome_exibicao=None, produto='master', tipo='winfo
     if not nome_exibicao:
         nome_exibicao = nome.replace('.', ' ')
 
-    local('dotnet new {} -n {}'.format(tipo, nome))
-    local('dotnet new sln -n "{}"'.format(nome_exibicao))
-    local('dotnet sln add {}'.format(nome))
+    criar_projeto_dotnet(tipo, nome, nome_exibicao)
     substituir_macros(nome, nome_exibicao, produto)
-    
+
+
+if __name__ == "__main__":
+    iniciar_projeto()
