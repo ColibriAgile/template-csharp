@@ -1,0 +1,18 @@
+{
+   "arquivos":[
+      {
+         "_pattern_nome":"BrModelo_.*\\.exe\\b",
+         "destino":"client",
+         "params_client":"/SP- /SILENT /VERYSILENT /SUPPRESSMSGBOXES /NOCANCEL /NORESTART"
+      }
+   ],
+   "dependencias":{
+      
+   },
+   "nome":"%projeto%",
+   "nome_exibicao":"%nomeExibicao%",
+   "produto":"%produto%",
+   "versao":"1.0.0.0",
+   "empresa":"NCR",
+   "sigla_empresa":"ncr"
+}

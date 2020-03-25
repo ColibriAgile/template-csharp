@@ -1,0 +1,426 @@
+<?xml version='1.0' encoding='utf-8'?>
+<project version='8' encrypted='1'>
+	<steps type='0'>
+		<step action='Subroutine Call'>
+			<Expand type='11'>-1</Expand>
+			<SubName>Carregar variaveis</SubName>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<name>Carregar variaveis</name>
+		</step>
+		<step action='Log Message'>
+			<Level type='3'>4</Level>
+			<Message><![CDATA[
+######################################################################
+#
+#  Iniciando Build
+#
+#  Parametros:
+#   -------------------
+#    Major version: %major-version%
+#    Minor version: %minor-version%
+#    Release......: %release%
+#    Build........: %build-number%
+#
+#    pasta-plano: %pasta-plano%
+#    pasta-projeto: %pasta-projeto%
+#    develop: %develop%
+#
+######################################################################
+]]></Message>
+			<name>Log Message</name>
+		</step>
+		<step action='Group'>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<name>Preparar Ambiente</name>
+		</step>
+		<step action='Delete Files'>
+			<Ext><![CDATA[*.exe
+*.dll]]></Ext>
+			<HideOn type='11'>-1</HideOn>
+			<LogDel type='11'>-1</LogDel>
+			<Path>%pasta-pacote%</Path>
+			<SysOn type='11'>-1</SysOn>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>Limpar</name>
+		</step>
+		<step action='Delete Files'>
+			<Ext>*.*</Ext>
+			<HideOn type='11'>-1</HideOn>
+			<LogDel type='11'>-1</LogDel>
+			<Path>%pasta-destino%</Path>
+			<SysOn type='11'>-1</SysOn>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>Limpar</name>
+		</step>
+		<step action='Group'>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<name>Restaurar Pacotes</name>
+		</step>
+		<step action='Subroutine Call'>
+			<Expand type='11'>-1</Expand>
+			<ParamValues array='0'>Restaurando pacotes nuget</ParamValues>
+			<Parameters array='0'>LOG_MSG</Parameters>
+			<SubName>Dividir log</SubName>
+			<indent type='3'>1</indent>
+			<name>Dividindo log</name>
+		</step>
+		<step action='Run Program'>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<command>dotnet restore "%pasta-projeto%\_br-library\Ncr.Library.sln"</command>
+			<indent type='3'>1</indent>
+			<name>dotnet restore Lib</name>
+			<outputfrom type='3'>1</outputfrom>
+			<startin>%pasta-projeto%\_br-library\</startin>
+		</step>
+		<step action='Run Program'>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<command>dotnet restore "%pasta-projeto%\%nomeExibicao%.sln"</command>
+			<indent type='3'>1</indent>
+			<name>dotnet restore projeto</name>
+			<outputfrom type='3'>1</outputfrom>
+			<startin>%pasta-projeto%</startin>
+		</step>
+		<step action='NuGet'>
+			<Command>restore</Command>
+			<Exe>%pasta-nuget%\nuget.exe</Exe>
+			<PackageId>%pasta-projeto%\%projeto%\%projeto%.csproj</PackageId>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>NuGet</name>
+		</step>
+		<step action='Group'>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<name>Compilar</name>
+		</step>
+		<step action='Subroutine Call'>
+			<Expand type='11'>-1</Expand>
+			<ParamValues array='0'>Compilando</ParamValues>
+			<Parameters array='0'>LOG_MSG</Parameters>
+			<SubName>Dividir log</SubName>
+			<indent type='3'>1</indent>
+			<name>Dividindo log</name>
+		</step>
+		<step action='Run Program'>
+			<ShowCmd type='11'>-1</ShowCmd>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<checked type='11'>0</checked>
+			<command>fab versionar_cs:%pasta-projeto%\%projeto%\Properties\AssemblyInfo.cs,versao=%versao%</command>
+			<indent type='3'>1</indent>
+			<name>Versionar</name>
+			<outputfrom type='3'>1</outputfrom>
+			<startin>%pasta-ncr-colibri%</startin>
+		</step>
+		<step action='MSBuild'>
+			<DetailedSummary type='11'>-1</DetailedSummary>
+			<Exe>%pasta-msbuild%\MSBuild.exe</Exe>
+			<M>*</M>
+			<NoLogo type='11'>-1</NoLogo>
+			<Options>/p:Configuration="Release"</Options>
+			<ProjectFile>%pasta-projeto%\%solucao%</ProjectFile>
+			<ShowCmd type='11'>-1</ShowCmd>
+			<Verbosity>Minimal</Verbosity>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>Compilar</name>
+		</step>
+		<step action='Group'>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<name>Gerar pacote</name>
+		</step>
+		<step action='Subroutine Call'>
+			<Expand type='11'>-1</Expand>
+			<ParamValues array='0'>Criando pacote de instalação</ParamValues>
+			<Parameters array='0'>LOG_MSG</Parameters>
+			<SubName>Dividir log</SubName>
+			<indent type='3'>1</indent>
+			<name>Dividindo log</name>
+		</step>
+		<step action='Inno Setup'>
+			<Exe>%pasta-inno%\ISCC.exe</Exe>
+			<Filename>installer.iss</Filename>
+			<ISPPCompat type='11'>-1</ISPPCompat>
+			<Options> /dAppVersion="%versao%" /dFileVersion="%versao%" /dYear="2019" </Options>
+			<OutputDir>%pasta-pacote%</OutputDir>
+			<ShowCmd type='11'>-1</ShowCmd>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>Inno Setup</name>
+		</step>
+		<step action='Run Program'>
+			<ShowCmd type='11'>-1</ShowCmd>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<checked type='11'>0</checked>
+			<command>fab empacotar_scripts:destino="%pasta-pacote%\_scripts.zip",caminho_scripts="%pasta-projeto%\_scripts"</command>
+			<indent type='3'>1</indent>
+			<name>Empacotar scripts</name>
+			<outputfrom type='3'>1</outputfrom>
+			<startin>%pasta-ncr-colibri%</startin>
+		</step>
+		<step action='Run Program'>
+			<ShowCmd type='11'>-1</ShowCmd>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<command>fab empacotar:"%pasta-pacote%",pasta_saida="%pasta-destino%",versao=%versao%,develop=%develop%,prefixo_pacote="%prefixo-pacote%",external_folder=%pasta-pacotes-externa%</command>
+			<indent type='3'>1</indent>
+			<name>Empacotar cmpkg</name>
+			<outputfrom type='3'>1</outputfrom>
+			<startin>%pasta-ncr-colibri%</startin>
+		</step>
+		<step action='Group'>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<checked type='11'>0</checked>
+			<name>Testes</name>
+		</step>
+		<step action='Run Program'>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<checked type='11'>0</checked>
+			<command>dotnet test -a:.  -l:xunit</command>
+			<continueonfail type='3'>1</continueonfail>
+			<indent type='3'>1</indent>
+			<name>Rodar testes</name>
+			<outputfrom type='3'>1</outputfrom>
+			<startin>%pasta-projeto%\%projeto-testes%</startin>
+		</step></steps>
+	<steps type='1'>
+		<step action='Group'>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<name>Versao</name>
+		</step>
+		<step action='Read INI'>
+			<Fail type='11'>-1</Fail>
+			<Filename>%PROJDIR%\versao.ini</Filename>
+			<Log type='11'>-1</Log>
+			<Macro>major-version</Macro>
+			<Section>%section%</Section>
+			<ValueName>MajorVersion</ValueName>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>MajorVersion</name>
+		</step>
+		<step action='Read INI'>
+			<Fail type='11'>-1</Fail>
+			<Filename>%PROJDIR%\versao.ini</Filename>
+			<Log type='11'>-1</Log>
+			<Macro>minor-version</Macro>
+			<Section>%section%</Section>
+			<ValueName>MinorVersion</ValueName>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>MinorVersion</name>
+		</step>
+		<step action='Read INI'>
+			<Fail type='11'>-1</Fail>
+			<Filename>%PROJDIR%\versao.ini</Filename>
+			<Log type='11'>-1</Log>
+			<Macro>release</Macro>
+			<Section>%section%</Section>
+			<ValueName>Release</ValueName>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>Release</name>
+		</step>
+		<step action='Group'>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<name>Carregar variaveis</name>
+		</step>
+		<step action='Set Macro'>
+			<MacroName>ini</MacroName>
+			<MacroValue>server.ini</MacroValue>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<condcomparison type='3'>1</condcomparison>
+			<condexpr>%BAMBOO_HOME%</condexpr>
+			<description>Usa o arquivo server.ini para carregar as variaveis necessárias, apenas se a variavel de ambiente BAMBOO_HOME estiver definida</description>
+			<indent type='3'>1</indent>
+			<name>Atribuir arquivo ini</name>
+		</step>
+		<step action='Subroutine Call'>
+			<Expand type='11'>-1</Expand>
+			<ParamValues array='0'>Carregando variaveis do arquivo "%ini%"</ParamValues>
+			<Parameters array='0'>log_msg</Parameters>
+			<SubName>Dividir log</SubName>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>Log</name>
+		</step>
+		<step action='Subroutine Call'>
+			<Expand type='11'>-1</Expand>
+			<ParamValues array='0'>versaoinfo</ParamValues>
+			<Parameters array='0'>section</Parameters>
+			<SubName>Versao</SubName>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>VersionInfo</name>
+		</step>
+		<step action='Group'>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>Produto</name>
+		</step>
+		<step action='Read INI'>
+			<Filename>%PROJDIR%\%ini%</Filename>
+			<Log type='11'>-1</Log>
+			<Macro>company-name</Macro>
+			<Section>produtoinfo</Section>
+			<ValueData>NCR Colibri</ValueData>
+			<ValueName>CompanyName</ValueName>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>2</indent>
+			<name>Empresa</name>
+		</step>
+		<step action='Read INI'>
+			<Filename>%PROJDIR%\%ini%</Filename>
+			<Log type='11'>-1</Log>
+			<Macro>projeto</Macro>
+			<Section>produtoinfo</Section>
+			<ValueData><![CDATA[<projeto>]]></ValueData>
+			<ValueName>ProductName</ValueName>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>2</indent>
+			<name>Produto</name>
+		</step>
+		<step action='Read INI'>
+			<Filename>%PROJDIR%\%ini%</Filename>
+			<Log type='11'>-1</Log>
+			<Macro>copyright</Macro>
+			<Section>produtoinfo</Section>
+			<ValueData>NCR Colibri © 2019</ValueData>
+			<ValueName>Copyright</ValueName>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>2</indent>
+			<name>Copyright</name>
+		</step>
+		<step action='Group'>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>1</indent>
+			<name>Paths</name>
+		</step>
+		<step action='Read INI'>
+			<Escape type='11'>-1</Escape>
+			<Filename>%PROJDIR%\%ini%</Filename>
+			<Log type='11'>-1</Log>
+			<Macro>pasta-plano</Macro>
+			<Section>pastas</Section>
+			<ValueData>%PROJDIR%\..\..</ValueData>
+			<ValueName>pasta-plano</ValueName>
+			<indent type='3'>2</indent>
+			<name>pasta do plano</name>
+		</step>
+		<step action='Read INI'>
+			<Escape type='11'>-1</Escape>
+			<Filename>%PROJDIR%\%ini%</Filename>
+			<Log type='11'>-1</Log>
+			<Macro>pasta-pacote</Macro>
+			<Section>pastas</Section>
+			<ValueData>%PROJDIR%\pacote</ValueData>
+			<ValueName>pasta-pacote</ValueName>
+			<indent type='3'>2</indent>
+			<name>pasta pacote</name>
+		</step>
+		<step action='Read INI'>
+			<Escape type='11'>-1</Escape>
+			<Filename>%PROJDIR%\%ini%</Filename>
+			<Log type='11'>-1</Log>
+			<Macro>pasta-ncr-colibri</Macro>
+			<Section>pastas</Section>
+			<ValueData>%PROJDIR%\..\..\ncr-colibri</ValueData>
+			<ValueName>pasta-ncr-colibri</ValueName>
+			<indent type='3'>2</indent>
+			<name>pasta ncr-colibri</name>
+		</step>
+		<step action='Read INI'>
+			<Escape type='11'>-1</Escape>
+			<Filename>%PROJDIR%\%ini%</Filename>
+			<Log type='11'>-1</Log>
+			<Macro>pasta-destino</Macro>
+			<Section>pastas</Section>
+			<ValueData>%PROJDIR%\temp</ValueData>
+			<ValueName>pasta-destino</ValueName>
+			<indent type='3'>2</indent>
+			<name>pasta destino</name>
+		</step>
+		<step action='Read INI'>
+			<Escape type='11'>-1</Escape>
+			<Filename>%PROJDIR%\%ini%</Filename>
+			<Log type='11'>-1</Log>
+			<Macro>pasta-projeto</Macro>
+			<Section>pastas</Section>
+			<ValueData>%PROJDIR%\..</ValueData>
+			<ValueName>pasta-projeto</ValueName>
+			<indent type='3'>2</indent>
+			<name>pasta projeto</name>
+		</step>
+		<step action='Read INI'>
+			<Escape type='11'>-1</Escape>
+			<Filename>%PROJDIR%\%ini%</Filename>
+			<Log type='11'>-1</Log>
+			<Macro>pasta-msbuild</Macro>
+			<Section>pastas</Section>
+			<ValueName>pasta-msbuild</ValueName>
+			<indent type='3'>2</indent>
+			<name>pasta msbuild</name>
+		</step>
+		<step action='Read INI'>
+			<Escape type='11'>-1</Escape>
+			<Filename>%PROJDIR%\%ini%</Filename>
+			<Log type='11'>-1</Log>
+			<Macro>pasta-nuget</Macro>
+			<Section>pastas</Section>
+			<ValueName>pasta-nuget</ValueName>
+			<indent type='3'>2</indent>
+			<name>pasta nuget</name>
+		</step>
+		<step action='Read INI'>
+			<Filename>%PROJDIR%\%ini%</Filename>
+			<Log type='11'>-1</Log>
+			<Macro>pasta-inno</Macro>
+			<Section>pastas</Section>
+			<ValueData>Pasta incorreta,  %ini% não foi lido corretamente.</ValueData>
+			<ValueName>pasta-inno</ValueName>
+			<buildfailsteps type='11'>0</buildfailsteps>
+			<indent type='3'>2</indent>
+			<name>pasta Inno Setup</name>
+		</step>
+		<step action='Group'>
+			<name>Dividir log</name>
+		</step>
+		<step action='Log Message'>
+			<Level type='3'>4</Level>
+			<Message><![CDATA[
+======================================================================
+%log_msg%
+======================================================================
+]]></Message>
+			<indent type='3'>1</indent>
+			<name>Log</name>
+		</step></steps>
+	<macros>
+		<macro name='branch-name'>
+			<category>1) Uteis</category>
+			<value>nenhum</value>
+		</macro>
+		<macro name='build-number'>
+			<category>1) Uteis</category>
+			<value>0</value>
+		</macro>
+		<macro name='develop'>
+			<category>1) Uteis</category>
+			<value>true</value>
+		</macro>
+		<macro name='INI'>
+			<category>1) Uteis</category>
+			<value>local.ini</value>
+		</macro>
+		<macro name='pasta-pacotes-externa'>
+			<category>1) Uteis</category>
+			<value>d:\pacotes\develop</value>
+		</macro>
+		<macro name='senha-zip'>
+			<category>1) Uteis</category>
+			<value>armagedon</value>
+		</macro>
+		<macro name='versao'>
+			<category>1) Uteis</category>
+			<value>%major-version%.%minor-version%.%release%.%build-number%</value>
+		</macro></macros>
+</project>
