@@ -53,6 +53,11 @@ def criar_projeto_dotnet(tipo, projeto, solucao):
     local('dotnet sln add {}'.format(projeto))
 
 @task
+def apagar_readme():
+    arquivo = obter_caminho('README.md')
+    os.unlink(arquivo)
+
+@task
 def iniciar_projeto(nome=None, nome_exibicao=None, produto='master', tipo='winforms'):
     pasta = os.path.basename(os.path.dirname(__file__))
     if not nome:
@@ -63,6 +68,7 @@ def iniciar_projeto(nome=None, nome_exibicao=None, produto='master', tipo='winfo
 
     criar_projeto_dotnet(tipo, nome, nome_exibicao)
     substituir_macros(nome, nome_exibicao, produto)
+    apagar_readme()
 
 
 if __name__ == "__main__":
