@@ -1,5 +1,6 @@
 
 import os
+import uuid
 from fabric.api import local, task, puts
 import string
 
@@ -18,11 +19,20 @@ def substituir_macro(arquivo, macro, valor):
         arq.write(data)
 
 def substituir_macros(nome, nome_exibicao, produto):
+    
+    def remover_prefixo(nome):
+        if nome.startswith('Br.'):
+            return nome[3:]
+        if nome.startswith('Ncr.'):
+            return nome[4:]
+        return nome 
+
     manifesto = obter_caminho(r'_build\pacote\manifesto.server')
     builder = obter_caminho(r'_build\builder.bld')
+    installer = obter_caminho(r'_build\installer.iss')
     arquivos = [
         obter_caminho(r'_build\server.ini'), 
-        obter_caminho(r'_build\installer.iss'),
+        installer,
         builder, 
         manifesto
     ] 
@@ -31,8 +41,13 @@ def substituir_macros(nome, nome_exibicao, produto):
         substituir_macro(arquivo, '%projeto%', nome)
 
     substituir_macro(builder, '%nomeExibicao%', nome_exibicao)
-    substituir_macro(manifesto, '%nomeExibicao%', nome_exibicao)
-    substituir_macro(manifesto, '%produto%', produto)
+    substituir_macro(manifesto, '%nomeExibicao%', remover_prefixo(nome_exibicao))
+    substituir_macro(manifesto, '%produto%', remover_prefixo(produto))
+    
+    app_id = str(uuid.uuid1())
+    puts('AppId gerado para a aplicação: ' + app_id)
+    substituir_macro(installer, r'%app_id%', app_id)
+
 
 @task
 def iniciar_projeto(nome=None, nome_exibicao=None, produto='master', tipo='winforms'):

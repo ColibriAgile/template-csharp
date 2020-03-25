@@ -49,7 +49,7 @@ Source: "..\{#ProjectName}\bin\Release\*.*"; DestDir: "{app}\client\{#ProjectNam
 
 [Code]
 const
-  APP_ID = '{guid}';
+  APP_ID = '%app_id%';
 {------------------------------------------------------------------------------}
 function GetAppID(const X: string): string;
 begin
